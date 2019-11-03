@@ -2,7 +2,6 @@ package gui;
 
 import java.io.IOException;
 import java.net.URL;
-import java.nio.channels.IllegalSelectorException;
 import java.util.List;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -104,15 +103,14 @@ public class DepartmentListController implements Initializable, DataChangeListen
 			controller.updateFormData();
 
 			Stage dialogStage = new Stage();
-
 			dialogStage.setTitle("Enter Department data");
 			dialogStage.setScene(new Scene(pane));
 			dialogStage.setResizable(false);
 			dialogStage.initOwner(parentStage);
 			dialogStage.initModality(Modality.WINDOW_MODAL);
 			dialogStage.showAndWait();
-
 		} catch (IOException e) {
+			e.printStackTrace();
 			Alerts.showAlert("IO Exception", "Error loading view", e.getMessage(), AlertType.ERROR);
 		}
 	}
@@ -120,7 +118,6 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	@Override
 	public void onDataChanged() {
 		updateTableView();
-
 	}
 
 	private void initEditButtons() {
@@ -161,7 +158,7 @@ public class DepartmentListController implements Initializable, DataChangeListen
 	}
 
 	private void removeEntity(Department obj) {
-		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "are you sure to delete?");
+		Optional<ButtonType> result = Alerts.showConfirmation("Confirmation", "Are you sure to delete?");
 
 		if (result.get() == ButtonType.OK) {
 			if (service == null) {
@@ -170,10 +167,10 @@ public class DepartmentListController implements Initializable, DataChangeListen
 			try {
 				service.remove(obj);
 				updateTableView();
-			} catch (DbIntegrityException e) {
-				Alerts.showAlert("Error Remove Alerts", null, e.getMessage(), AlertType.ERROR);
 			}
-
+			catch (DbIntegrityException e) {
+				Alerts.showAlert("Error removing object", null, e.getMessage(), AlertType.ERROR);
+			}
 		}
 	}
 }
